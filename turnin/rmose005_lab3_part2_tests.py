@@ -1,49 +1,40 @@
-/*	Author: rmose005
- *  Partner(s) Name: 
- *	Lab Section:
- *	Assignment: Lab #3  Exercise #2
- *	Exercise Description: [optional - include for your own benefit]
- *
- *	I acknowledge all content contained herein, excluding template or example
- *	code, is my own original work.
- */
-#include <avr/io.h>
-#ifdef _SIMULATE_
-#include "simAVRHeader.h"
-#endif
+# Array of tests to run (in order)
+# Each test contains
+#   description - 
+#   steps - A list of steps to perform, each step can have
+#       inputs - A list of tuples for the inputs to apply at that step
+#       *time - The time (in ms) to wait before continuing to the next step 
+#           and before checking expected values for this step. The time should be a multiple of
+#           the period of the system
+#       *iterations - The number of clock ticks to wait (periods)
+#       expected - The expected value at the end of this step (after the "time" has elapsed.) 
+#           If this value is incorrect the test will fail early before completing.
+#       * only one of these should be used
+#   expected - The expected output (as a list of tuples) at the end of this test
+# An example set of tests is shown below. It is important to note that these tests are not "unit tests" in 
+# that they are not ran in isolation but in the order shown and the state of the device is not reset or 
+# altered in between executions (unless preconditions are used).
+tests = [{'description': 'PINA: 0x01 => PORTC: 0x20',
+    'steps': [ {'inputs': [('PINA',0x01)], 'iterations': 5 } ],
+    'expected': [('PORTC',0x60)],
+    },
+    {'description': 'PINA: 0x07 => PORTC: 0x3C',
+    'steps': [ {'inputs': [('PINA',0x07)], 'iterations': 5 } ],
+    'expected': [('PORTC',0x3C)],
+    },
+    {'description': 'PINA: 0x0F => PORTC: 0x3F',
+    'steps': [ {'inputs': [('PINA',0x0F)], 'iterations': 5 } ],
+    'expected': [('PORTC',0x3F)],
+    },
+    {'description': 'PINA: 0x83 => PORTC: 0x70',
+    'steps': [ {'inputs': [('PINA',0x83)], 'iterations': 5 } ],
+    'expected': [('PORTC',0x70)],
+    },
 
-int main(void) {
-    /* Insert DDR and PORT initializations */
-	DDRA = 0x00; PORTA = 0xFF; // Configure port A's 8 pins as inputs, initalize to 1s.
-	DDRC = 0xFF; PORTC = 0x00; // Configure port B's 8 pins as outputs, initalize to 0s.
-   	
-	unsigned char tmpA = 0x00;
-	unsigned char tmpC = 0x00;
-    /* Insert your solution below */
-    while (1) {
-	// 1) Read input
-	tmpA = PINA;
-	tmpC = 0x00;
-	// 2) Perform computation	
-	if (tmpA == 1 || tmpA == 2)
-		tmpC = 0x20; // PC5 lights
-	else if (tmpA == 3 || tmpA == 4)
-		tmpC = 0x30; // PC5 and PC4 light
-	else if (tmpA == 5 || tmpA == 6)
-		tmpC = 0x38; // PC5..PC3 light
-	else if (tmpA == 7 || tmpA == 8 || tmpA == 9)
-		tmpC = 0x3C; // PC5..PC2 light
-	else if (tmpA == 10 || tmpA == 11 || tmpA == 12)
-		tmpC = 0x3E; // PC5..PC1 light
-	else if (tmpA == 13 || tmpA == 14 || tmpA == 15)
-		tmpC = 0x3F;
-	
-	if (tmpA <= 4) // if fuel lvl less than 4:
-		tmpC = tmpC | 0x40; // light up PC6.
-			
-	// 3) Write output
-	PORTC = tmpC;
-	
-    }
-    return 1;
-}
+    ]
+
+# Optionally you can add a set of "watch" variables these need to be global or static and may need
+# to be scoped at the function level (for static variables) if there are naming conflicts. The 
+# variables listed here will display everytime you hit (and stop at) a breakpoint
+# watch = ['PORTC']
+

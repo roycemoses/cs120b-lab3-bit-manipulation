@@ -22,7 +22,7 @@ int main(void) {
     /* Insert your solution below */
     while (1) {
 	// 1) Read input
-	tmpA = PINA;
+	tmpA = PINA & 0x0F; // only read in PA3..PA0
 	tmpC = 0x00;
 	// 2) Perform computation	
 	if (tmpA == 1 || tmpA == 2)
