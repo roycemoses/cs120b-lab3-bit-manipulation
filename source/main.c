@@ -18,11 +18,13 @@ int main(void) {
 	DDRC = 0xFF; PORTC = 0x00; // Configure port B's 8 pins as outputs, initalize to 0s.
    	
 	unsigned char tmpA = 0x00;
+	unsigned char tmpA2 = 0x00;
 	unsigned char tmpC = 0x00;
     /* Insert your solution below */
     while (1) {
 	// 1) Read input
 	tmpA = PINA & 0x0F; // only read in PA3..PA0
+	tmpA2 = PINA & 0x70; // only read in PA6..PA4
 	tmpC = 0x00;
 	// 2) Perform computation	
 	if (tmpA == 1 || tmpA == 2)
@@ -40,7 +42,10 @@ int main(void) {
 	
 	if (tmpA <= 4) // if fuel lvl less than 4:
 		tmpC = tmpC | 0x40; // light up PC6.
-			
+	
+	if (tmpA2 == 0x30) // if key in ignition, driver seated, and belt not fastened,
+		tmpC = tmpC | 0x80; // light "Fasten seatbelt" which is PC7
+		
 	// 3) Write output
 	PORTC = tmpC;
 	
